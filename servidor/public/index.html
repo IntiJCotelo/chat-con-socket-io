@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat con Socket.IO</title>
+    <style>
+        .escondido{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Chat con Socket.IO</h1>
+    <div class="contenedor-nombre">
+        Ingresa tu nombre: <input type="text" id="nombre">
+        <button id="btn-aceptar">Aceptar</button>
+    </div>
+    <div class="contenedor-chat escondido">
+        <input type="text" id="input-mensaje" placeholder="Escribe un mensaje...">
+        <button id="btn-enviar">Enviar</button>
+        <ul id="ul-mensajes"></ul>
+    </div>
+
+    <script src="socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        const contenedorNombre = document.querySelector('.contenedor-nombre');
+        const inputNombre = document.querySelector('#nombre');
+        const btnAceptar = document.querySelector('#btn-aceptar');
+        const contenedorChat = document.querySelector('.contenedor-chat');
+        const inputMensaje = document.querySelector('#input-mensaje');
+        const btnEnviar = document.querySelector('#btn-enviar');
+        const ulMensajes = document.querySelector('#ul-mensajes');
+        let nombrePersona = "";
+
+        btnAceptar.addEventListener('click', () => {
+            nombrePersona = inputNombre.value;
+            if (nombrePersona) {
+                socket.emit('nuevo-usuario', { nombre });
+                inputNombre.value = '';
+                contenedorNombre.classList.add('escondido');
+                contenedorChat.classList.remove('escondido');
+            }
+        });
+
+        btnEnviar.addEventListener('click', () => {
+            const mensaje = inputMensaje.value;
+            if (mensaje) {
+                socket.emit('nuevo-mensaje', { nombre: nombrePersona, mensaje });
+                inputMensaje.value = '';
+            }
+        });
+
+        socket.on('nuevo-mensaje', ({ nombre, mensaje }) => {
+            const li = document.createElement('li');
+            li.textContent = `${nombre}: ${mensaje}`;
+            ulMensajes.appendChild(li);
+        });
+
+        
+
+    </script>
+</body>
+</html>
