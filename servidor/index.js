@@ -1,26 +1,22 @@
 const express = require('express');
-const http = require('http');
-const { Server } = require("socket.io");
-const path = require('path');
-
 const app = express();
+const http = require('http');
 const server = http.createServer(app);
+const { Server } = require("socket.io");
 const io = new Server(server);
+const path = require('path');
 
 io.on('connection', (socket) => {
     console.log('Usuario conectado');
 
-    socket.on('message', (message) => {
-        console.log(`Mensaje recibido: ${message}`);
-    })
-
-    socket.on('message', (message) => {
-        io.emit('message', message);
+    socket.on('chat message', (msg) => {
+        console.log('Mensaje: ' + msg);
+        io.emit('chat message', msg);
     })
 
     socket.on('disconnect', () => {
         console.log('Usuario desconectado');
-    });
+    })
 });
 
 //EXPRESS
@@ -32,6 +28,6 @@ app.get('/', (req, res) => {
 //EXPRESS
 
 server.listen(3000, () => {
-    console.log('Escuchando en puerto 3000');
+    console.log('Escuchando en el puerto 3000');
 })
 
